@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="devly-config.js"></script>
 
   <style>
     :root {
@@ -1100,6 +1101,31 @@
       localStorage.setItem("devly_master_rider_db", JSON.stringify(list));
     }
 
+    async function syncRegistrationToCloud(item) {
+      try {
+        const endpoint = (window.DEVLY_CONFIG && window.DEVLY_CONFIG.cloudDbUrl) 
+          ? window.DEVLY_CONFIG.cloudDbUrl 
+          : 'https://devly-partner-registry-default-rtdb.firebaseio.com/applications';
+        
+        let url = endpoint;
+        if (url.includes('firebaseio.com') && !url.endsWith('.json')) {
+          url += '.json';
+        }
+
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(item)
+        });
+
+        if (res.ok) {
+          console.log('✅ Realtime Cloud Sync Successful:', item.regId);
+        }
+      } catch (err) {
+        console.warn('Cloud sync offline/cached:', err);
+      }
+    }
+
     function toggleTheme() {
       const html = document.documentElement;
       const cur = html.getAttribute("data-theme") || "light";
@@ -1516,6 +1542,7 @@
       };
 
       saveRegistration(fullRecord);
+      syncRegistrationToCloud(fullRecord);
 
       setTimeout(() => {
         document.getElementById("reviewCard").style.display = "none";
