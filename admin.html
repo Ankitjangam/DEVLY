@@ -711,7 +711,18 @@
         const res = await fetch(url, { cache: "no-store" });
         
         if (res.ok) {
-          const data = await res.json();
+          const rawText = await res.text();
+          if (rawText.trim().startsWith("<")) {
+            if (statusText) statusText.innerHTML = `<span style="color: #F59E0B;">⚠️ Webhook: Set Access to 'Anyone'</span>`;
+            console.warn("Apps Script returned Google Login HTML. Please set 'Who has access' to 'Anyone'.");
+            return;
+          }
+          let data = null;
+          try {
+            data = JSON.parse(rawText);
+          } catch(e) {
+            console.warn("JSON parse error:", e);
+          }
           let cloudItems = [];
           if (data) {
             if (Array.isArray(data)) {
