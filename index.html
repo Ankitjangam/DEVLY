@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DEVLY — Earn Daily with Flexible Hours | Delivery Partner Fleet</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --primary: #FF6B00;
+      --primary-hover: #E05E00;
+      --primary-light: rgba(255, 107, 0, 0.1);
+      --secondary: #111827;
+      --accent: #2563EB;
+      --bg: #FAFAF9;
+      --surface: #FFFFFF;
+      --border: #E5E7EB;
+      --text: #111827;
+      --text-muted: #6B7280;
+    }
+    [data-theme="dark"] {
+      --bg: #0B0F19;
+      --surface: #111827;
+      --border: #1F2937;
+      --text: #F9FAFB;
+      --text-muted: #9CA3AF;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+    
+    /* Nav */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(16px);
+      background: rgba(255, 255, 255, 0.85);
+      border-bottom: 1px solid var(--border);
+    }
+    [data-theme="dark"] .nav { background: rgba(17, 24, 39, 0.85); }
+    .nav-inner { display: flex; justify-content: space-between; align-items: center; height: 76px; }
+    .logo-container { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text); }
+    .logo-badge {
+      background: var(--primary);
+      color: #FFF;
+      font-weight: 900;
+      font-size: 20px;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(255,107,0,0.35);
+    }
+    .logo-text { font-size: 22px; font-weight: 900; letter-spacing: -0.5px; }
+    .logo-text span { color: var(--primary); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-size: 13.5px;
+      font-weight: 800;
+    }
+    .nav-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-link:hover { color: var(--primary); }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 15px;
+      padding: 14px 28px;
+      border-radius: 14px;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-rider {
+      background: var(--primary);
+      color: #FFFFFF;
+      box-shadow: 0 4px 16px rgba(255, 107, 0, 0.35);
+    }
+    .btn-rider:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+    }
+
+    /* Hero */
+    .hero { padding: 70px 0 90px; }
+    .hero-grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 48px; align-items: center; }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(37, 99, 235, 0.1);
+      border: 1px solid rgba(37, 99, 235, 0.3);
+      color: #2563EB;
+      padding: 8px 18px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 24px;
+    }
+    .hero-title { font-size: 52px; font-weight: 900; line-height: 1.15; letter-spacing: -1.8px; margin-bottom: 20px; }
+    .hero-title span { color: var(--primary); }
+    .hero-subtitle { font-size: 19px; color: var(--text-muted); margin-bottom: 36px; max-width: 540px; }
+    .hero-ctas { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 40px; }
+    .hero-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding-top: 28px; border-top: 1px solid var(--border); }
+    .stat-num { font-size: 28px; font-weight: 900; color: var(--primary); }
+    .stat-label { font-size: 13px; font-weight: 700; color: var(--text-muted); }
+
+    .rider-card-mockup {
+      background: #111827;
+      border: 1px solid #374151;
+      border-radius: 28px;
+      padding: 24px;
+      color: #FFF;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.25);
+    }
+
+    /* Features Section */
+    .section { padding: 90px 0; }
+    .section-header { text-align: center; max-width: 680px; margin: 0 auto 60px; }
+    .section-tag { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--primary); margin-bottom: 12px; display: inline-block; }
+    .section-title { font-size: 38px; font-weight: 900; letter-spacing: -1px; margin-bottom: 16px; }
+    .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 36px 28px;
+      transition: all 0.3s ease;
+    }
+    .feature-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06); border-color: rgba(255, 107, 0, 0.4); }
+    .feature-icon { width: 60px; height: 60px; border-radius: 16px; background: rgba(37, 99, 235, 0.1); color: #2563EB; display: flex; align-items: center; justify-content: center; font-size: 26px; margin-bottom: 24px; }
+    .feature-title { font-size: 20px; font-weight: 800; margin-bottom: 12px; }
+    .feature-desc { color: var(--text-muted); font-size: 15px; line-height: 1.6; }
+
+    footer { border-top: 1px solid var(--border); padding: 50px 0 30px; margin-top: 80px; }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; color: var(--text-muted); font-size: 14px; flex-wrap: wrap; gap: 16px; }
+
+    @media (max-width: 960px) {
+      .hero-grid { grid-template-columns: 1fr; text-align: center; }
+      .hero-subtitle { margin: 0 auto 36px; }
+      .hero-ctas { justify-content: center; }
+      .hero-stats { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a href="index.html" class="logo-container">
+        <div class="logo-badge">🚴</div>
+        <div class="logo-text">DEVLY <span>Delivery</span></div>
+      </a>
+      
+      <div class="nav-links">
+        <a href="#benefits" class="nav-link">Benefits</a>
+        <a href="#earnings" class="nav-link">Pay Slabs</a>
+        <a href="#safety" class="nav-link">Rider Insurance</a>
+      </div>
+
+      <div>
+        <a href="register.html" class="btn btn-rider" style="padding: 10px 22px; font-size: 13.5px;">Join as Rider</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container hero-grid">
+      <div>
+        <div class="hero-badge">🛵 Guaranteed Weekly Payouts + Accidental Cover</div>
+        <h1 class="hero-title">
+          Drive When You Want, <br/><span>Earn What You Deserve.</span>
+        </h1>
+        <p class="hero-subtitle">
+          Join the DEVLY Delivery Partner network. Enjoy flexible working hours, transparent per-kilometer distance pay, peak-hour incentives, and instant weekly bank transfers.
+        </p>
+        <div class="hero-ctas">
+          <a href="register.html" class="btn btn-rider">📱 Register / Apply as Rider</a>
+          <a href="#earnings" class="btn" style="background: var(--surface); border: 1px solid var(--border);">💰 View Pay Slabs</a>
+        </div>
+        <div class="hero-stats">
+          <div><div class="stat-num">₹25,000+</div><div class="stat-label">Monthly Earning Potential</div></div>
+          <div><div class="stat-num">Weekly</div><div class="stat-label">Direct Bank Payouts</div></div>
+          <div><div class="stat-num">₹5 Lakh</div><div class="stat-label">Free Accident Cover</div></div>
+        </div>
+      </div>
+
+      <div class="rider-card-mockup">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1F2937; padding-bottom: 16px; margin-bottom: 16px;">
+          <div style="font-size: 15px; font-weight: 800; color: #FF6B00;">Active Delivery Run</div>
+          <span style="background: #1E3A8A; color: #93C5FD; font-size: 11px; padding: 3px 8px; border-radius: 6px; font-weight: 800;">EN ROUTE TO STORE</span>
+        </div>
+        <div style="background: #1F2937; border-radius: 14px; padding: 16px; margin-bottom: 14px;">
+          <div style="font-size: 12px; color: #9CA3AF;">This Week's Earnings</div>
+          <div style="font-size: 26px; font-weight: 900; color: #10B981;">₹7,420.00</div>
+          <div style="font-size: 11px; color: #9CA3AF; margin-top: 4px;">42 Trips Completed • ₹650 Peak Surge Bonus</div>
+        </div>
+        <div style="background: #1F2937; border-radius: 14px; padding: 14px;">
+          <div style="font-size: 13px; font-weight: 800;">Pickup: Royal Sweets &amp; Bakery</div>
+          <div style="font-size: 12px; color: #9CA3AF; margin-top: 2px;">Drop: Sector 14 (3.2 km) • Earn ₹55.00</div>
+          <div style="margin-top: 12px; display: flex; gap: 8px;">
+            <button style="flex: 1; background: #FF6B00; color: #FFF; border: none; font-weight: 800; font-size: 12px; padding: 10px; border-radius: 8px; cursor: pointer;">Navigate GPS 🗺️</button>
+            <button style="background: #374151; color: #FFF; border: none; font-weight: 800; font-size: 12px; padding: 10px 14px; border-radius: 8px; cursor: pointer;">Call Store</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Benefits Section -->
+  <section class="section" id="benefits" style="background: var(--surface); border-top: 1px solid var(--border);">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">Rider Benefits</div>
+        <h2 class="section-title">Why Deliver With DEVLY?</h2>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">⏱️</div>
+          <h3 class="feature-title">100% Flexible Hours</h3>
+          <p class="feature-desc">Be your own boss. Log in and log out anytime that fits your daily schedule. Work full-time or part-time.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📍</div>
+          <h3 class="feature-title">Smart Corridor Batching</h3>
+          <p class="feature-desc">Our intelligent routing batches nearby store orders along your path so you earn more per kilometer traveled.</p>
+        </div>
+        <div class="feature-card" id="safety">
+          <div class="feature-icon">🛡️</div>
+          <h3 class="feature-title">Medical &amp; Accident Cover</h3>
+          <p class="feature-desc">Complimentary ₹5 Lakh accidental insurance cover and round-the-clock emergency road support while on duty.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎁</div>
+          <h3 class="feature-title">Joining &amp; Referral Bonuses</h3>
+          <p class="feature-desc">Earn up to ₹2,000 joining bonus after completing your first 50 deliveries, plus referral bonuses for bringing friends.</p>
+        </div>
+        <div class="feature-card" id="earnings">
+          <div class="feature-icon">⚡</div>
+          <h3 class="feature-title">Instant Cash Withdrawal</h3>
+          <p class="feature-desc">Withdraw your daily earnings directly to your UPI ID or bank account anytime without waiting for the weekly cycle.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">👕</div>
+          <h3 class="feature-title">Free Gear &amp; Uniform</h3>
+          <p class="feature-desc">Get an insulated thermal delivery backpack, premium DEVLY rider t-shirt, rain jacket, and safety helmet sticker on signup.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-bottom">
+        <div>© 2026 DEVLY Delivery Network • All Rights Reserved.</div>
+        <div>
+          <a href="register.html" style="color: var(--primary); text-decoration: none; font-weight: 800;">Register as Rider ➔</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

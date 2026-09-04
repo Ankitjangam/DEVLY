@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DEVLY — Owner Admin Desk &amp; Excel Downloader</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- SheetJS for Production Excel (.xlsx) Download -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <style>
+    :root {
+      --primary: #FF6B00;
+      --primary-hover: #E05E00;
+      --bg: #090E17;
+      --surface: #0F172A;
+      --card-bg: #141D2E;
+      --border: #1E293B;
+      --text: #F9FAFB;
+      --text-muted: #9CA3AF;
+      --success: #10B981;
+      --accent: #2563EB;
+      --danger: #EF4444;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container { max-width: 1400px; margin: 0 auto; padding: 0 20px; width: 100%; }
+
+    /* Nav */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(16px);
+      background: rgba(15, 23, 42, 0.92);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner { display: flex; justify-content: space-between; align-items: center; height: 68px; }
+    .logo-container { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); }
+    .logo-badge {
+      background: var(--primary);
+      color: #FFF;
+      font-weight: 900;
+      font-size: 18px;
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(255,107,0,0.35);
+    }
+    .logo-text { font-size: 18px; font-weight: 900; letter-spacing: -0.5px; }
+    .logo-text span { color: var(--primary); }
+
+    /* Action Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 800;
+      font-size: 13px;
+      padding: 10px 18px;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+    }
+    .btn-excel {
+      background: #059669;
+      color: #FFFFFF;
+      box-shadow: 0 4px 14px rgba(5, 150, 105, 0.35);
+    }
+    .btn-excel:hover { background: #047857; transform: translateY(-2px); }
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--text);
+      border: 1.5px solid var(--border);
+    }
+    .btn-secondary:hover {
+      border-color: var(--primary);
+    }
+
+    /* Main Table & Stats */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px 20px;
+    }
+    .stat-val { font-size: 26px; font-weight: 900; color: var(--primary); font-family: 'JetBrains Mono', monospace; }
+    .stat-label { font-size: 12px; color: var(--text-muted); font-weight: 700; margin-top: 2px; }
+
+    .table-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 40px;
+    }
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+    .search-input {
+      padding: 9px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #090E17;
+      color: #FFF;
+      font-size: 13px;
+      width: 280px;
+    }
+    .search-input:focus { outline: none; border-color: var(--primary); }
+
+    .table-wrapper {
+      overflow-x: auto;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    th {
+      background: #090E17;
+      padding: 12px 14px;
+      font-weight: 800;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-size: 10.5px;
+      letter-spacing: 0.4px;
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+    tr:hover { background: rgba(255, 107, 0, 0.04); }
+
+    .badge-status {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success);
+    }
+    .badge-status.review {
+      background: rgba(245, 158, 11, 0.15);
+      color: #F59E0B;
+    }
+    .badge-pill {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-size: 10.5px;
+      font-weight: 700;
+      background: rgba(37, 99, 235, 0.15);
+      color: #60A5FA;
+      margin-right: 4px;
+    }
+
+    /* Detail Modal */
+    .modal-backdrop {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      z-index: 999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      max-width: 680px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 28px;
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .modal-close:hover { color: #FFF; }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 24px 0;
+      margin-top: auto;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 992px) {
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 580px) {
+      .stats-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation -->
+  <nav class="nav">
+    <div class="container nav-inner">
+      <div class="logo-container">
+        <div class="logo-badge">🛡️</div>
+        <div>
+          <div class="logo-text">DEVLY <span>Admin Desk</span></div>
+          <div style="font-size: 10.5px; color: var(--text-muted); font-weight: 700;">Owner Registration Management &amp; Excel Exporter</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px;">
+        <button onclick="downloadExcelFile()" class="btn btn-excel">
+          <i class="fa-solid fa-file-excel"></i>
+          <span>Download Master Excel (.xlsx)</span>
+        </button>
+
+        <a href="register.html" class="btn btn-secondary" target="_blank">
+          <i class="fa-solid fa-user-plus"></i>
+          <span>Registration Form</span>
+        </a>
+
+        <a href="index.html" class="btn btn-secondary">
+          <i class="fa-solid fa-house"></i>
+          <span>Landing</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="container" style="flex: 1;">
+    
+    <!-- Top Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-val" id="statTotal">0</div>
+        <div class="stat-label">Total Registered Partners</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="statApproved" style="color: var(--success);">0</div>
+        <div class="stat-label">Approved Partners</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="statReview" style="color: #F59E0B;">0</div>
+        <div class="stat-label">Under Verification</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="statEV" style="color: #60A5FA;">0</div>
+        <div class="stat-label">EV / Green Fleet</div>
+      </div>
+    </div>
+
+    <!-- Table Card -->
+    <div class="table-card">
+      <div class="table-header">
+        <div>
+          <h2 style="font-size: 18px; font-weight: 900;">Registered Delivery Partners Master Directory</h2>
+          <p style="font-size: 12.5px; color: var(--text-muted);">Complete record with all 16 applicant details &amp; one-click Excel sheet generator.</p>
+        </div>
+
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <input type="text" id="searchBox" class="search-input" placeholder="Search by name, mobile, email, plate..." oninput="renderTable()">
+          <button onclick="downloadExcelFile()" class="btn btn-excel" style="padding: 9px 14px; font-size: 12.5px;">
+            <i class="fa-solid fa-download"></i>
+            <span>Export (.xlsx)</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Action</th>
+              <th>Reg ID</th>
+              <th>Partner Name</th>
+              <th>Mobile</th>
+              <th>Email</th>
+              <th>DOB / Gender</th>
+              <th>City &amp; State</th>
+              <th>Languages</th>
+              <th>Emergency Contact</th>
+              <th>Govt ID</th>
+              <th>DL Number</th>
+              <th>Vehicle &amp; Model</th>
+              <th>Plate No</th>
+              <th>Documents</th>
+              <th>Submitted At</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <!-- Dynamically populated -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Dossier Modal -->
+  <div class="modal-backdrop" id="dossierModal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <div>© 2026 DEVLY Delivery Network • Internal Operations Management Desk</div>
+    </div>
+  </footer>
+
+  <!-- Javascript -->
+  <script>
+    const SEED_DATA = [
+      {
+        regId: "DEVLY-REG-2026-9021",
+        fullName: "Vikram Sharma",
+        mobileNumber: "9876543210",
+        email: "vikram.sharma@example.com",
+        dob: "1998-05-14",
+        gender: "Male",
+        languages: ["English", "Hindi", "Kannada"],
+        currentAddress: "#42, 2nd Floor, 5th Cross, Indiranagar",
+        city: "Bengaluru",
+        state: "Karnataka",
+        pinCode: "560038",
+        emergencyName: "Ramesh Sharma",
+        emergencyRelation: "Father",
+        emergencyPhone: "9845112233",
+        riderPhoto: "vikram_profile.jpg",
+        govtIdType: "Aadhaar Card",
+        govtIdNumber: "8821 9021 3412",
+        govtIdDoc: "aadhaar_vikram_card.pdf",
+        dlNumber: "KA0120220088191",
+        dlExpiry: "2035-08-20",
+        dlDoc: "dl_vikram_front_back.pdf",
+        vehicleType: "Motorcycle (Petrol 2W)",
+        vehicleOwnership: "Self Owned",
+        vehicleModel: "Hero Splendor Plus",
+        vehicleRegNumber: "KA 01 EK 8821",
+        rcDoc: "rc_ka01ek8821.pdf",
+        submittedAt: "2026-09-02 10:15:30 IST",
+        status: "APPROVED"
+      },
+      {
+        regId: "DEVLY-REG-2026-9022",
+        fullName: "Rahul Kumar Yadav",
+        mobileNumber: "9812345678",
+        email: "rahul.yadav@example.com",
+        dob: "2000-11-22",
+        gender: "Male",
+        languages: ["English", "Hindi", "Telugu"],
+        currentAddress: "#12, 4th Block, Koramangala",
+        city: "Bengaluru",
+        state: "Karnataka",
+        pinCode: "560034",
+        emergencyName: "Sunita Yadav",
+        emergencyRelation: "Mother",
+        emergencyPhone: "9741223344",
+        riderPhoto: "rahul_profile.jpg",
+        govtIdType: "Aadhaar Card",
+        govtIdNumber: "4921 3310 9940",
+        govtIdDoc: "aadhaar_rahul.jpg",
+        dlNumber: "KA0320210049210",
+        dlExpiry: "2036-04-15",
+        dlDoc: "dl_rahul_scanned.pdf",
+        vehicleType: "Electric Vehicle (EV 2W)",
+        vehicleOwnership: "Self Owned",
+        vehicleModel: "Ather 450X Gen 3",
+        vehicleRegNumber: "KA 03 EV 4410",
+        rcDoc: "rc_ka03ev4410.pdf",
+        submittedAt: "2026-09-03 14:22:15 IST",
+        status: "APPROVED"
+      },
+      {
+        regId: "DEVLY-REG-2026-9023",
+        fullName: "Deepak Choudhary",
+        mobileNumber: "9654321098",
+        email: "deepak.c@example.com",
+        dob: "1997-03-08",
+        gender: "Male",
+        languages: ["Hindi", "English"],
+        currentAddress: "Flat 204, Sector 62",
+        city: "Noida",
+        state: "Uttar Pradesh",
+        pinCode: "201301",
+        emergencyName: "Pooja Choudhary",
+        emergencyRelation: "Spouse",
+        emergencyPhone: "9811009988",
+        riderPhoto: "deepak_photo.png",
+        govtIdType: "PAN Card",
+        govtIdNumber: "ABCDE1234F",
+        govtIdDoc: "pan_deepak.pdf",
+        dlNumber: "DL0320210078192",
+        dlExpiry: "2034-09-10",
+        dlDoc: "dl_deepak_copy.pdf",
+        vehicleType: "Scooter (Gearless)",
+        vehicleOwnership: "Family / Friend Owned",
+        vehicleModel: "Honda Activa 6G",
+        vehicleRegNumber: "DL 3S CD 4481",
+        rcDoc: "rc_dl3scd4481.pdf",
+        submittedAt: "2026-09-04 11:05:40 IST",
+        status: "UNDER_REVIEW"
+      }
+    ];
+
+    function getRegistrations() {
+      const stored = localStorage.getItem("devly_master_rider_db");
+      if (stored) {
+        try {
+          return JSON.parse(stored);
+        } catch (e) {
+          console.error("Error reading stored registrations", e);
+        }
+      }
+      localStorage.setItem("devly_master_rider_db", JSON.stringify(SEED_DATA));
+      return SEED_DATA;
+    }
+
+    function renderTable() {
+      const records = getRegistrations();
+      const q = document.getElementById("searchBox").value.toLowerCase().trim();
+
+      const filtered = records.filter(r => {
+        return !q || 
+          r.fullName?.toLowerCase().includes(q) ||
+          r.mobileNumber?.includes(q) ||
+          r.email?.toLowerCase().includes(q) ||
+          r.regId?.toLowerCase().includes(q) ||
+          r.city?.toLowerCase().includes(q) ||
+          r.vehicleRegNumber?.toLowerCase().includes(q) ||
+          r.dlNumber?.toLowerCase().includes(q);
+      });
+
+      const tbody = document.getElementById("tableBody");
+      tbody.innerHTML = "";
+
+      filtered.forEach((r, idx) => {
+        const tr = document.createElement("tr");
+        const langsHtml = Array.isArray(r.languages) ? r.languages.map(l => `<span class="badge-pill">${l}</span>`).join('') : (r.languages || '-');
+        const statusClass = r.status === "APPROVED" ? "badge-status" : "badge-status review";
+        
+        tr.innerHTML = `
+          <td>
+            <button onclick="viewDossier('${r.regId}')" class="btn btn-secondary" style="padding: 4px 8px; font-size: 11px;">
+              <i class="fa-solid fa-eye"></i> View
+            </button>
+          </td>
+          <td style="font-weight: 900; color: var(--primary); font-family: 'JetBrains Mono', monospace;">${r.regId}</td>
+          <td style="font-weight: 800;">${r.fullName}</td>
+          <td style="font-family: 'JetBrains Mono', monospace;">${r.mobileNumber}</td>
+          <td style="color: var(--text-muted);">${r.email || '-'}</td>
+          <td>${r.dob || '-'} <small style="color: var(--text-muted);">(${r.gender || '-'})</small></td>
+          <td>${r.city || '-'}, ${r.state || '-'} <small>(${r.pinCode || '-'})</small></td>
+          <td>${langsHtml}</td>
+          <td>${r.emergencyName || '-'} <small style="color: var(--text-muted);">(${r.emergencyRelation || '-'} • ${r.emergencyPhone || '-'})</small></td>
+          <td style="font-family: 'JetBrains Mono', monospace;">${r.govtIdType || 'ID'}: ${r.govtIdNumber || r.aadhaarNumber || '-'}</td>
+          <td style="font-family: 'JetBrains Mono', monospace;">${r.dlNumber || '-'}</td>
+          <td>${r.vehicleType || '-'} • ${r.vehicleModel || '-'}</td>
+          <td style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">${r.vehicleRegNumber || '-'}</td>
+          <td style="color: var(--success);">
+            <i class="fa-solid fa-file-arrow-down" title="Photo: ${r.riderPhoto}, ID: ${r.govtIdDoc || r.aadhaarDoc}, DL: ${r.dlDoc}, RC: ${r.rcDoc}"></i> 4 Files
+          </td>
+          <td style="font-size: 11px; color: var(--text-muted);">${r.submittedAt}</td>
+          <td><span class="${statusClass}">${r.status}</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // Update counters
+      document.getElementById("statTotal").innerText = records.length;
+      document.getElementById("statApproved").innerText = records.filter(r => r.status === "APPROVED").length;
+      document.getElementById("statReview").innerText = records.filter(r => r.status === "UNDER_REVIEW" || r.status === "UNDER_VERIFICATION").length;
+      document.getElementById("statEV").innerText = records.filter(r => r.vehicleType && r.vehicleType.includes("EV")).length;
+    }
+
+    function viewDossier(regId) {
+      const records = getRegistrations();
+      const r = records.find(item => item.regId === regId);
+      if (!r) return;
+
+      const langs = Array.isArray(r.languages) ? r.languages.join(", ") : (r.languages || 'English, Hindi');
+      
+      const content = `
+        <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 14px; margin-bottom: 16px;">
+          <div>
+            <h3 style="font-size: 20px; font-weight: 900; color: var(--primary);">${r.fullName}</h3>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-muted);">${r.regId}</div>
+          </div>
+          <span class="badge-status">${r.status}</span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; font-size: 13px;">
+          <div><strong style="color: var(--text-muted);">Mobile:</strong> ${r.mobileNumber}</div>
+          <div><strong style="color: var(--text-muted);">Email:</strong> ${r.email || '-'}</div>
+          <div><strong style="color: var(--text-muted);">DOB:</strong> ${r.dob || '-'}</div>
+          <div><strong style="color: var(--text-muted);">Gender:</strong> ${r.gender || '-'}</div>
+          <div style="grid-column: 1 / -1;"><strong style="color: var(--text-muted);">Languages:</strong> ${langs}</div>
+          <div style="grid-column: 1 / -1;"><strong style="color: var(--text-muted);">Address:</strong> ${r.currentAddress || r.homeAddress || '-'}, ${r.city || ''}, ${r.state || ''} - ${r.pinCode || ''}</div>
+          <div><strong style="color: var(--text-muted);">Emergency Contact:</strong> ${r.emergencyName || '-'} (${r.emergencyRelation || '-'})</div>
+          <div><strong style="color: var(--text-muted);">Emergency Phone:</strong> ${r.emergencyPhone || '-'}</div>
+          <div><strong style="color: var(--text-muted);">Govt ID:</strong> ${r.govtIdType || 'Aadhaar'}: ${r.govtIdNumber || r.aadhaarNumber || '-'}</div>
+          <div><strong style="color: var(--text-muted);">DL Number:</strong> ${r.dlNumber || '-'} (Exp: ${r.dlExpiry || 'N/A'})</div>
+          <div><strong style="color: var(--text-muted);">Vehicle Type:</strong> ${r.vehicleType || '-'} (${r.vehicleOwnership || 'Owned'})</div>
+          <div><strong style="color: var(--text-muted);">Vehicle Model:</strong> ${r.vehicleModel || '-'} [${r.vehicleRegNumber || '-'}]</div>
+        </div>
+
+        <div style="margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border);">
+          <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; color: var(--primary); margin-bottom: 8px;">Uploaded Documents</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; font-size: 12px;">
+            <span class="badge-pill"><i class="fa-solid fa-camera"></i> Photo: ${r.riderPhoto || 'photo.jpg'}</span>
+            <span class="badge-pill"><i class="fa-solid fa-id-card"></i> ID: ${r.govtIdDoc || r.aadhaarDoc || 'id.pdf'}</span>
+            <span class="badge-pill"><i class="fa-solid fa-id-badge"></i> DL: ${r.dlDoc || 'dl.pdf'}</span>
+            <span class="badge-pill"><i class="fa-solid fa-file-contract"></i> RC: ${r.rcDoc || 'rc.pdf'}</span>
+          </div>
+        </div>
+      `;
+
+      document.getElementById("modalContent").innerHTML = content;
+      document.getElementById("dossierModal").style.display = "flex";
+    }
+
+    function closeModal() {
+      document.getElementById("dossierModal").style.display = "none";
+    }
+
+    function downloadExcelFile() {
+      const records = getRegistrations();
+      if (!records.length) {
+        alert("No registrations available.");
+        return;
+      }
+
+      const excelRows = records.map(r => ({
+        "Registration ID": r.regId,
+        "Full Name": r.fullName,
+        "Mobile Number": r.mobileNumber,
+        "Email Address": r.email || "",
+        "Date of Birth": r.dob || "",
+        "Gender": r.gender || "",
+        "Languages Known": Array.isArray(r.languages) ? r.languages.join(", ") : (r.languages || ""),
+        "Current Address": r.currentAddress || r.homeAddress || "",
+        "City": r.city || "",
+        "State": r.state || "",
+        "PIN Code": r.pinCode || "",
+        "Emergency Contact Name": r.emergencyName || "",
+        "Emergency Relationship": r.emergencyRelation || "",
+        "Emergency Contact Phone": r.emergencyPhone || "",
+        "Rider Profile Photo": r.riderPhoto || "",
+        "Government ID Type": r.govtIdType || "Aadhaar Card",
+        "Government ID Number": r.govtIdNumber || r.aadhaarNumber || "",
+        "Government ID Document": r.govtIdDoc || r.aadhaarDoc || "",
+        "Driving Licence Number": r.dlNumber || "",
+        "Driving Licence Expiry": r.dlExpiry || "",
+        "Driving Licence Document": r.dlDoc || "",
+        "Vehicle Type": r.vehicleType || "",
+        "Vehicle Ownership": r.vehicleOwnership || "Self Owned",
+        "Vehicle Make & Model": r.vehicleModel || "",
+        "Vehicle Registration Plate": r.vehicleRegNumber || "",
+        "Vehicle RC Document": r.rcDoc || "",
+        "Submission Date/Time": r.submittedAt || "",
+        "Application Status": r.status || "UNDER_VERIFICATION"
+      }));
+
+      const worksheet = XLSX.utils.json_to_sheet(excelRows);
+
+      worksheet['!cols'] = [
+        { wch: 22 }, // Registration ID
+        { wch: 22 }, // Full Name
+        { wch: 15 }, // Mobile Number
+        { wch: 25 }, // Email Address
+        { wch: 14 }, // Date of Birth
+        { wch: 12 }, // Gender
+        { wch: 24 }, // Languages Known
+        { wch: 38 }, // Current Address
+        { wch: 16 }, // City
+        { wch: 16 }, // State
+        { wch: 12 }, // PIN Code
+        { wch: 22 }, // Emergency Contact Name
+        { wch: 16 }, // Emergency Relationship
+        { wch: 18 }, // Emergency Contact Phone
+        { wch: 22 }, // Rider Profile Photo
+        { wch: 20 }, // Government ID Type
+        { wch: 20 }, // Government ID Number
+        { wch: 24 }, // Government ID Document
+        { wch: 22 }, // Driving Licence Number
+        { wch: 16 }, // Driving Licence Expiry
+        { wch: 24 }, // Driving Licence Document
+        { wch: 24 }, // Vehicle Type
+        { wch: 20 }, // Vehicle Ownership
+        { wch: 24 }, // Vehicle Make & Model
+        { wch: 20 }, // Vehicle Registration Plate
+        { wch: 24 }, // Vehicle RC Document
+        { wch: 22 }, // Submission Date/Time
+        { wch: 18 }  // Application Status
+      ];
+
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "DEVLY_Riders_Master");
+
+      const dateStr = new Date().toISOString().slice(0,10);
+      XLSX.writeFile(workbook, `DEVLY_Rider_Registrations_Master_${dateStr}.xlsx`);
+    }
+
+    document.addEventListener("DOMContentLoaded", renderTable);
+  </script>
+</body>
+</html>
+

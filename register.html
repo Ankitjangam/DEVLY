@@ -1,0 +1,1573 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DEVLY — Join as Rider | Delivery Partner Registration</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --primary: #FF6B00;
+      --primary-hover: #E05E00;
+      --primary-light: rgba(255, 107, 0, 0.08);
+      --secondary: #111827;
+      --accent: #2563EB;
+      --bg: #F8FAFC;
+      --surface: #FFFFFF;
+      --border: #E2E8F0;
+      --text: #0F172A;
+      --text-muted: #64748B;
+      --success: #10B981;
+      --danger: #EF4444;
+      --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+    }
+    [data-theme="dark"] {
+      --bg: #090E17;
+      --surface: #0F172A;
+      --border: #1E293B;
+      --text: #F8FAFC;
+      --text-muted: #94A3B8;
+      --primary-light: rgba(255, 107, 0, 0.15);
+      --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .container { max-width: 760px; margin: 0 auto; padding: 0 18px; width: 100%; }
+
+    /* Nav */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(16px);
+      background: rgba(255, 255, 255, 0.92);
+      border-bottom: 1px solid var(--border);
+    }
+    [data-theme="dark"] .nav { background: rgba(15, 23, 42, 0.92); }
+    .nav-inner { display: flex; justify-content: space-between; align-items: center; height: 68px; }
+    .logo-container { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); }
+    .logo-badge {
+      background: var(--primary);
+      color: #FFF;
+      font-weight: 900;
+      font-size: 18px;
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(255,107,0,0.35);
+    }
+    .logo-text { font-size: 18px; font-weight: 900; letter-spacing: -0.5px; }
+    .logo-text span { color: var(--primary); }
+
+    /* Header Banner */
+    .hero-banner {
+      background: linear-gradient(135deg, #111827 0%, #1F2937 100%);
+      color: #FFF;
+      border-radius: 20px;
+      padding: 24px 28px;
+      margin: 20px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-banner::after {
+      content: "";
+      position: absolute;
+      top: -30px;
+      right: -30px;
+      width: 140px;
+      height: 140px;
+      background: var(--primary);
+      filter: blur(60px);
+      opacity: 0.25;
+    }
+    .hero-title { font-size: 22px; font-weight: 900; letter-spacing: -0.5px; }
+    .hero-subtitle { font-size: 13px; color: #9CA3AF; margin-top: 4px; }
+    .hero-tag {
+      background: rgba(255, 107, 0, 0.2);
+      color: #FF8A33;
+      font-size: 11.5px;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 107, 0, 0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Duplicate Error Alert Box */
+    .duplicate-alert {
+      background: rgba(239, 68, 68, 0.08);
+      border: 1.5px solid var(--danger);
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      display: none;
+      align-items: flex-start;
+      gap: 12px;
+      animation: fadeIn 0.3s ease;
+    }
+    .duplicate-alert.visible { display: flex; }
+    .duplicate-icon { color: var(--danger); font-size: 22px; margin-top: 2px; }
+    .duplicate-text h4 { font-size: 14px; font-weight: 800; color: var(--danger); }
+    .duplicate-text p { font-size: 12.5px; color: var(--text); margin-top: 2px; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Form Card */
+    .form-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px 28px;
+      box-shadow: var(--card-shadow);
+      margin-bottom: 40px;
+    }
+
+    .form-section {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px 22px;
+      margin-bottom: 24px;
+    }
+
+    .form-section-heading {
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--primary);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .form-group:last-child { margin-bottom: 0; }
+
+    .form-label {
+      font-size: 12.5px;
+      font-weight: 800;
+      color: var(--text);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .req-star { color: var(--danger); }
+    
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      padding: 11px 14px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 13.5px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.12);
+    }
+    .form-input.error, .form-select.error, .form-textarea.error {
+      border-color: var(--danger);
+      background: rgba(239, 68, 68, 0.02);
+    }
+    .error-msg {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--danger);
+      display: none;
+      align-items: center;
+      gap: 4px;
+      margin-top: 2px;
+    }
+    .error-msg.visible { display: flex; }
+
+    .form-row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+    .form-row-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    /* Language Pills Selection */
+    .lang-pills-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .lang-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 13px;
+      border-radius: 10px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--text);
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s ease;
+    }
+    .lang-pill:hover { border-color: var(--primary); }
+    .lang-pill.selected {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    .lang-pill input { display: none; }
+
+    /* Document Upload */
+    .upload-box {
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      background: var(--surface);
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+    .upload-box:hover {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+    .upload-icon { font-size: 20px; color: var(--primary); margin-bottom: 4px; }
+    .upload-title { font-size: 12.5px; font-weight: 800; }
+    .upload-hint { font-size: 11px; color: var(--text-muted); }
+    
+    .upload-preview-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 8px;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success);
+      font-size: 11.5px;
+      font-weight: 800;
+      margin-top: 8px;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 800;
+      font-size: 14px;
+      padding: 13px 22px;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #FFFFFF;
+      box-shadow: 0 4px 16px rgba(255, 107, 0, 0.35);
+      width: 100%;
+    }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+    }
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--text);
+      border: 1.5px solid var(--border);
+    }
+    .btn-secondary:hover {
+      border-color: var(--text-muted);
+    }
+
+    /* Review Grid */
+    .review-section-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .review-section-title {
+      font-size: 11.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--primary);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .review-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 18px;
+      font-size: 12.5px;
+    }
+    .review-item { display: flex; flex-direction: column; }
+    .review-label { color: var(--text-muted); font-size: 11px; font-weight: 700; }
+    .review-value { color: var(--text); font-weight: 800; word-break: break-word; }
+
+    /* Success Card & Timeline */
+    .success-card {
+      text-align: center;
+      padding: 36px 24px;
+    }
+    .success-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: rgba(16, 185, 129, 0.12);
+      border: 2.5px solid var(--success);
+      color: var(--success);
+      font-size: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 18px;
+    }
+
+    .contact-banner {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(255, 107, 0, 0.08) 100%);
+      border: 1.5px solid rgba(255, 107, 0, 0.3);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    .contact-banner-title {
+      font-size: 17px;
+      font-weight: 900;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .contact-banner-desc {
+      font-size: 13px;
+      color: var(--text);
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    /* Onboarding Steps Timeline */
+    .timeline-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin: 20px 0;
+      text-align: center;
+    }
+    .timeline-step {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 8px;
+    }
+    .timeline-step.active {
+      border-color: var(--success);
+      background: rgba(16, 185, 129, 0.08);
+    }
+    .step-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--border);
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 6px;
+    }
+    .timeline-step.active .step-num {
+      background: var(--success);
+      color: #FFF;
+    }
+    .step-name { font-size: 11px; font-weight: 800; color: var(--text); }
+
+    @media (max-width: 680px) {
+      .form-row-2, .form-row-3 { grid-template-columns: 1fr; gap: 12px; margin-bottom: 12px; }
+      .form-card { padding: 20px 16px; }
+      .review-grid { grid-template-columns: 1fr; }
+      .timeline-steps { grid-template-columns: 1fr 1fr; }
+      .hero-banner { flex-direction: column; text-align: left; align-items: flex-start; gap: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Simple Navigation Bar -->
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a href="index.html" class="logo-container">
+        <div class="logo-badge">🚴</div>
+        <div class="logo-text">DEVLY <span>Rider Partner</span></div>
+      </a>
+
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <a href="index.html" class="btn btn-secondary" style="padding: 7px 14px; font-size: 12.5px;">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>Landing Page</span>
+        </a>
+
+        <button onclick="toggleTheme()" class="btn btn-secondary" style="padding: 7px 10px; font-size: 12px;" id="themeToggleBtn" title="Toggle Dark/Light Mode">
+          🌙
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <main class="container" style="flex: 1;">
+    
+    <!-- Top Hero Banner -->
+    <div class="hero-banner">
+      <div>
+        <div class="hero-title">Rider Partner Onboarding Form</div>
+        <div class="hero-subtitle">Complete your verified rider registration to join the DEVLY delivery network.</div>
+      </div>
+      <div class="hero-tag">
+        <i class="fa-solid fa-shield-halved"></i> 100% Verified
+      </div>
+    </div>
+
+    <!-- Duplicate Application Alert Banner (Dynamic) -->
+    <div class="duplicate-alert" id="duplicateAlertBox">
+      <div class="duplicate-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+      <div class="duplicate-text">
+        <h4>Duplicate Application Detected</h4>
+        <p id="duplicateAlertMsg">An application with these details already exists in our system. Duplicate submissions are not permitted.</p>
+      </div>
+    </div>
+
+    <!-- REGISTRATION FORM CARD -->
+    <div class="form-card" id="registrationCard">
+      
+      <form id="riderRegistrationForm" novalidate onsubmit="handleFormReview(event)">
+        
+        <!-- SECTION 1: PERSONAL INFORMATION -->
+        <div class="form-section">
+          <div class="form-section-heading">
+            <i class="fa-solid fa-user"></i> 1. Personal Information
+          </div>
+
+          <div class="form-row-2">
+            <!-- Full Name -->
+            <div class="form-group">
+              <label class="form-label">Full Name <span class="req-star">*</span></label>
+              <input type="text" id="fullName" class="form-input" placeholder="e.g. Vikram Sharma" required>
+              <span class="error-msg" id="err-fullName"><i class="fa-solid fa-circle-exclamation"></i> Enter your legal full name.</span>
+            </div>
+
+            <!-- Mobile Number -->
+            <div class="form-group">
+              <label class="form-label">Mobile Number <span class="req-star">*</span></label>
+              <input type="tel" id="mobileNumber" class="form-input" maxlength="10" placeholder="e.g. 9876543210 (10 digits)" required>
+              <span class="error-msg" id="err-mobileNumber"><i class="fa-solid fa-circle-exclamation"></i> Enter a valid 10-digit mobile number.</span>
+            </div>
+          </div>
+
+          <div class="form-row-3">
+            <!-- Email -->
+            <div class="form-group">
+              <label class="form-label">Email Address <span class="req-star">*</span></label>
+              <input type="email" id="email" class="form-input" placeholder="e.g. vikram@example.com" required>
+              <span class="error-msg" id="err-email"><i class="fa-solid fa-circle-exclamation"></i> Enter a valid email address.</span>
+            </div>
+
+            <!-- Date of Birth -->
+            <div class="form-group">
+              <label class="form-label">Date of Birth <span class="req-star">*</span></label>
+              <input type="date" id="dob" class="form-input" required>
+              <span class="error-msg" id="err-dob"><i class="fa-solid fa-circle-exclamation"></i> Rider must be at least 18 years old.</span>
+            </div>
+
+            <!-- Gender -->
+            <div class="form-group">
+              <label class="form-label">Gender <span class="req-star">*</span></label>
+              <select id="gender" class="form-select" required>
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+              <span class="error-msg" id="err-gender"><i class="fa-solid fa-circle-exclamation"></i> Select your gender.</span>
+            </div>
+          </div>
+
+          <!-- Languages Known -->
+          <div class="form-group" style="margin-top: 10px;">
+            <label class="form-label">Languages Known <span class="req-star">*</span> <small style="font-weight: 500; color: var(--text-muted);">(Select all you can speak/read)</small></label>
+            <div class="lang-pills-container" id="langPillsGroup">
+              <label class="lang-pill selected"><input type="checkbox" name="lang" value="English" checked> English</label>
+              <label class="lang-pill selected"><input type="checkbox" name="lang" value="Hindi" checked> Hindi</label>
+              <label class="lang-pill"><input type="checkbox" name="lang" value="Kannada"> Kannada</label>
+              <label class="lang-pill"><input type="checkbox" name="lang" value="Tamil"> Tamil</label>
+              <label class="lang-pill"><input type="checkbox" name="lang" value="Telugu"> Telugu</label>
+              <label class="lang-pill"><input type="checkbox" name="lang" value="Marathi"> Marathi</label>
+              <label class="lang-pill"><input type="checkbox" name="lang" value="Bengali"> Bengali</label>
+              <label class="lang-pill"><input type="checkbox" name="lang" value="Gujarati"> Gujarati</label>
+              <label class="lang-pill"><input type="checkbox" name="lang" value="Malayalam"> Malayalam</label>
+              <label class="lang-pill"><input type="checkbox" name="lang" value="Punjabi"> Punjabi</label>
+            </div>
+            <span class="error-msg" id="err-languages"><i class="fa-solid fa-circle-exclamation"></i> Please select at least one language.</span>
+          </div>
+
+        </div>
+
+        <!-- SECTION 2: CURRENT ADDRESS & LOCATION -->
+        <div class="form-section">
+          <div class="form-section-heading">
+            <i class="fa-solid fa-map-location-dot"></i> 2. Current Address &amp; Location
+          </div>
+
+          <!-- Current Address -->
+          <div class="form-group">
+            <label class="form-label">Current Residential Address <span class="req-star">*</span></label>
+            <textarea id="currentAddress" class="form-textarea" rows="2" placeholder="e.g. Flat 302, Green Meadows Apt, 12th Main Road" required></textarea>
+            <span class="error-msg" id="err-currentAddress"><i class="fa-solid fa-circle-exclamation"></i> Enter your current address.</span>
+          </div>
+
+          <div class="form-row-3">
+            <!-- City -->
+            <div class="form-group">
+              <label class="form-label">City <span class="req-star">*</span></label>
+              <input type="text" id="city" class="form-input" placeholder="e.g. Bengaluru" required>
+              <span class="error-msg" id="err-city"><i class="fa-solid fa-circle-exclamation"></i> Enter your city.</span>
+            </div>
+
+            <!-- State -->
+            <div class="form-group">
+              <label class="form-label">State <span class="req-star">*</span></label>
+              <input type="text" id="state" class="form-input" placeholder="e.g. Karnataka" required>
+              <span class="error-msg" id="err-state"><i class="fa-solid fa-circle-exclamation"></i> Enter your state.</span>
+            </div>
+
+            <!-- PIN Code -->
+            <div class="form-group">
+              <label class="form-label">PIN Code <span class="req-star">*</span></label>
+              <input type="text" id="pinCode" class="form-input" maxlength="6" placeholder="e.g. 560038 (6 digits)" style="font-family: 'JetBrains Mono', monospace;" required>
+              <span class="error-msg" id="err-pinCode"><i class="fa-solid fa-circle-exclamation"></i> Enter 6-digit PIN code.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 3: EMERGENCY CONTACT -->
+        <div class="form-section">
+          <div class="form-section-heading">
+            <i class="fa-solid fa-phone-volume"></i> 3. Emergency Contact
+          </div>
+
+          <div class="form-row-3">
+            <!-- Emergency Contact Name -->
+            <div class="form-group">
+              <label class="form-label">Contact Person Name <span class="req-star">*</span></label>
+              <input type="text" id="emergencyName" class="form-input" placeholder="e.g. Ramesh Sharma" required>
+              <span class="error-msg" id="err-emergencyName"><i class="fa-solid fa-circle-exclamation"></i> Enter emergency contact name.</span>
+            </div>
+
+            <!-- Relationship -->
+            <div class="form-group">
+              <label class="form-label">Relationship <span class="req-star">*</span></label>
+              <select id="emergencyRelation" class="form-select" required>
+                <option value="">Select Relation</option>
+                <option value="Father">Father</option>
+                <option value="Mother">Mother</option>
+                <option value="Spouse">Spouse</option>
+                <option value="Brother">Brother</option>
+                <option value="Sister">Sister</option>
+                <option value="Friend">Friend</option>
+                <option value="Other">Other</option>
+              </select>
+              <span class="error-msg" id="err-emergencyRelation"><i class="fa-solid fa-circle-exclamation"></i> Select relationship.</span>
+            </div>
+
+            <!-- Emergency Contact Mobile -->
+            <div class="form-group">
+              <label class="form-label">Emergency Mobile Number <span class="req-star">*</span></label>
+              <input type="tel" id="emergencyPhone" class="form-input" maxlength="10" placeholder="e.g. 9845112233" required>
+              <span class="error-msg" id="err-emergencyPhone"><i class="fa-solid fa-circle-exclamation"></i> Enter 10-digit emergency number.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 4: PROFILE PHOTO -->
+        <div class="form-section">
+          <div class="form-section-heading">
+            <i class="fa-solid fa-camera"></i> 4. Rider Profile Photo
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Rider Profile Photo <span class="req-star">*</span> <small style="font-weight: 500; color: var(--text-muted);">(Clear front passport face picture)</small></label>
+            <div class="upload-box" onclick="triggerUpload('riderPhoto')">
+              <input type="file" id="riderPhoto" style="display: none;" accept="image/*" onchange="onFileUploaded(event, 'preview-riderPhoto')">
+              <div class="upload-icon"><i class="fa-solid fa-circle-user"></i></div>
+              <div class="upload-title">Click to upload Profile Photo</div>
+              <div class="upload-hint">JPG or PNG • Front-facing clear photo</div>
+              <div id="preview-riderPhoto" style="display: none;" class="upload-preview-tag">
+                <i class="fa-solid fa-circle-check"></i> <span>profile_photo.jpg (Attached)</span>
+              </div>
+            </div>
+            <span class="error-msg" id="err-riderPhoto"><i class="fa-solid fa-circle-exclamation"></i> Profile photo is required.</span>
+          </div>
+        </div>
+
+        <!-- SECTION 5: GOVERNMENT ID DETAILS -->
+        <div class="form-section">
+          <div class="form-section-heading">
+            <i class="fa-solid fa-id-card"></i> 5. Government ID Verification
+          </div>
+
+          <div class="form-row-2">
+            <!-- Govt ID Type -->
+            <div class="form-group">
+              <label class="form-label">Government ID Type <span class="req-star">*</span></label>
+              <select id="govtIdType" class="form-select" required>
+                <option value="Aadhaar Card" selected>Aadhaar Card (12 Digits)</option>
+                <option value="PAN Card">PAN Card (10 Characters)</option>
+                <option value="Voter ID">Voter ID Card</option>
+                <option value="Passport">Passport</option>
+              </select>
+            </div>
+
+            <!-- Govt ID Number -->
+            <div class="form-group">
+              <label class="form-label">Government ID Number <span class="req-star">*</span></label>
+              <input type="text" id="govtIdNumber" class="form-input" placeholder="e.g. 8821 9021 3412" style="font-family: 'JetBrains Mono', monospace; text-transform: uppercase;" required>
+              <span class="error-msg" id="err-govtIdNumber"><i class="fa-solid fa-circle-exclamation"></i> Enter a valid ID number.</span>
+            </div>
+          </div>
+
+          <!-- Govt ID Document Upload -->
+          <div class="form-group">
+            <label class="form-label">Government ID Document / Photo <span class="req-star">*</span></label>
+            <div class="upload-box" onclick="triggerUpload('govtIdDoc')">
+              <input type="file" id="govtIdDoc" style="display: none;" accept="image/*,.pdf" onchange="onFileUploaded(event, 'preview-govtIdDoc')">
+              <div class="upload-icon"><i class="fa-solid fa-file-shield"></i></div>
+              <div class="upload-title">Click to upload Government ID Document</div>
+              <div class="upload-hint">Image or PDF (Front &amp; Back) • Max 5MB</div>
+              <div id="preview-govtIdDoc" style="display: none;" class="upload-preview-tag">
+                <i class="fa-solid fa-circle-check"></i> <span>government_id.pdf (Attached)</span>
+              </div>
+            </div>
+            <span class="error-msg" id="err-govtIdDoc"><i class="fa-solid fa-circle-exclamation"></i> Government ID document upload is required.</span>
+          </div>
+        </div>
+
+        <!-- SECTION 6: DRIVING LICENCE DETAILS -->
+        <div class="form-section">
+          <div class="form-section-heading">
+            <i class="fa-solid fa-id-badge"></i> 6. Driving Licence Details
+          </div>
+
+          <div class="form-row-2">
+            <!-- DL Number -->
+            <div class="form-group">
+              <label class="form-label">Driving Licence Number <span class="req-star">*</span></label>
+              <input type="text" id="dlNumber" class="form-input" placeholder="e.g. KA0120220088191" style="text-transform: uppercase; font-family: 'JetBrains Mono', monospace;" required>
+              <span class="error-msg" id="err-dlNumber"><i class="fa-solid fa-circle-exclamation"></i> Enter driving licence number (or CYCLE-NA for bicycle).</span>
+            </div>
+
+            <!-- DL Expiry -->
+            <div class="form-group">
+              <label class="form-label">Licence Expiry / Valid Upto <span class="req-star">*</span></label>
+              <input type="date" id="dlExpiry" class="form-input" required>
+              <span class="error-msg" id="err-dlExpiry"><i class="fa-solid fa-circle-exclamation"></i> Select licence expiry date.</span>
+            </div>
+          </div>
+
+          <!-- DL Document Upload -->
+          <div class="form-group">
+            <label class="form-label">Driving Licence Document / Photo <span class="req-star">*</span></label>
+            <div class="upload-box" onclick="triggerUpload('dlDoc')">
+              <input type="file" id="dlDoc" style="display: none;" accept="image/*,.pdf" onchange="onFileUploaded(event, 'preview-dlDoc')">
+              <div class="upload-icon"><i class="fa-solid fa-file-lines"></i></div>
+              <div class="upload-title">Click to upload Driving Licence (DL)</div>
+              <div class="upload-hint">Image or PDF • Max 5MB</div>
+              <div id="preview-dlDoc" style="display: none;" class="upload-preview-tag">
+                <i class="fa-solid fa-circle-check"></i> <span>driving_licence.pdf (Attached)</span>
+              </div>
+            </div>
+            <span class="error-msg" id="err-dlDoc"><i class="fa-solid fa-circle-exclamation"></i> Driving licence document is required.</span>
+          </div>
+        </div>
+
+        <!-- SECTION 7: VEHICLE DETAILS & REGISTRATION -->
+        <div class="form-section">
+          <div class="form-section-heading">
+            <i class="fa-solid fa-motorcycle"></i> 7. Vehicle Details &amp; Registration
+          </div>
+
+          <div class="form-row-2">
+            <!-- Vehicle Type -->
+            <div class="form-group">
+              <label class="form-label">Vehicle Type <span class="req-star">*</span></label>
+              <select id="vehicleType" class="form-select" required>
+                <option value="Motorcycle (Petrol 2W)" selected>Motorcycle / Bike (Petrol)</option>
+                <option value="Scooter (Gearless)">Scooter (Activa / Access / Jupiter)</option>
+                <option value="Electric Vehicle (EV 2W)">Electric EV (Ola / Ather / Chetak)</option>
+                <option value="Bicycle (Non-Motorized)">Bicycle (Local Delivery)</option>
+              </select>
+            </div>
+
+            <!-- Vehicle Ownership -->
+            <div class="form-group">
+              <label class="form-label">Vehicle Ownership <span class="req-star">*</span></label>
+              <select id="vehicleOwnership" class="form-select" required>
+                <option value="Self Owned" selected>Self Owned (Registered in my name)</option>
+                <option value="Family / Friend Owned">Family / Relative Owned</option>
+                <option value="Rented / Leased">Rented / Commercial Lease</option>
+                <option value="Company Provided">Company / Fleet Provided</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row-2">
+            <!-- Vehicle Model -->
+            <div class="form-group">
+              <label class="form-label">Vehicle Make &amp; Model <span class="req-star">*</span></label>
+              <input type="text" id="vehicleModel" class="form-input" placeholder="e.g. Hero Splendor Plus / TVS Jupiter" required>
+              <span class="error-msg" id="err-vehicleModel"><i class="fa-solid fa-circle-exclamation"></i> Enter vehicle model.</span>
+            </div>
+
+            <!-- Vehicle Registration Number -->
+            <div class="form-group">
+              <label class="form-label">Vehicle Registration (Number Plate) <span class="req-star">*</span></label>
+              <input type="text" id="vehicleRegNumber" class="form-input" placeholder="e.g. KA 01 EK 8821" style="text-transform: uppercase; font-family: 'JetBrains Mono', monospace;" required>
+              <span class="error-msg" id="err-vehicleRegNumber"><i class="fa-solid fa-circle-exclamation"></i> Enter registration plate number.</span>
+            </div>
+          </div>
+
+          <!-- Vehicle RC Document Upload -->
+          <div class="form-group">
+            <label class="form-label">Vehicle RC (Registration Certificate) Photo / Document <span class="req-star">*</span></label>
+            <div class="upload-box" onclick="triggerUpload('rcDoc')">
+              <input type="file" id="rcDoc" style="display: none;" accept="image/*,.pdf" onchange="onFileUploaded(event, 'preview-rcDoc')">
+              <div class="upload-icon"><i class="fa-solid fa-file-contract"></i></div>
+              <div class="upload-title">Click to upload Vehicle RC Book / Card</div>
+              <div class="upload-hint">Image or PDF • Max 5MB</div>
+              <div id="preview-rcDoc" style="display: none;" class="upload-preview-tag">
+                <i class="fa-solid fa-circle-check"></i> <span>vehicle_rc.pdf (Attached)</span>
+              </div>
+            </div>
+            <span class="error-msg" id="err-rcDoc"><i class="fa-solid fa-circle-exclamation"></i> Vehicle RC document is required.</span>
+          </div>
+
+        </div>
+
+        <!-- Submit Button -->
+        <div style="margin-top: 10px;">
+          <button type="submit" class="btn btn-primary" id="reviewBtn">
+            <span>Review &amp; Submit Rider Application</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+
+    <!-- REVIEW SCREEN -->
+    <div class="form-card" id="reviewCard" style="display: none;">
+      <h2 style="font-size: 22px; font-weight: 900; margin-bottom: 4px;">Review Your Registration Details</h2>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Please verify all collected details before confirming your application.</p>
+
+      <!-- Review Section 1 -->
+      <div class="review-section-box">
+        <div class="review-section-title"><i class="fa-solid fa-user"></i> 1. Personal Details</div>
+        <div class="review-grid">
+          <div class="review-item"><span class="review-label">Full Name</span><span class="review-value" id="rev-name">-</span></div>
+          <div class="review-item"><span class="review-label">Mobile Number</span><span class="review-value" id="rev-mobile">-</span></div>
+          <div class="review-item"><span class="review-label">Email Address</span><span class="review-value" id="rev-email">-</span></div>
+          <div class="review-item"><span class="review-label">Date of Birth</span><span class="review-value" id="rev-dob">-</span></div>
+          <div class="review-item"><span class="review-label">Gender</span><span class="review-value" id="rev-gender">-</span></div>
+          <div class="review-item"><span class="review-label">Languages Known</span><span class="review-value" id="rev-languages">-</span></div>
+        </div>
+      </div>
+
+      <!-- Review Section 2 -->
+      <div class="review-section-box">
+        <div class="review-section-title"><i class="fa-solid fa-map-location-dot"></i> 2. Address &amp; Location</div>
+        <div class="review-grid">
+          <div class="review-item" style="grid-column: 1 / -1;"><span class="review-label">Current Address</span><span class="review-value" id="rev-address">-</span></div>
+          <div class="review-item"><span class="review-label">City</span><span class="review-value" id="rev-city">-</span></div>
+          <div class="review-item"><span class="review-label">State</span><span class="review-value" id="rev-state">-</span></div>
+          <div class="review-item"><span class="review-label">PIN Code</span><span class="review-value" id="rev-pincode" style="font-family: 'JetBrains Mono', monospace;">-</span></div>
+        </div>
+      </div>
+
+      <!-- Review Section 3 -->
+      <div class="review-section-box">
+        <div class="review-section-title"><i class="fa-solid fa-phone-volume"></i> 3. Emergency Contact</div>
+        <div class="review-grid">
+          <div class="review-item"><span class="review-label">Contact Person</span><span class="review-value" id="rev-emName">-</span></div>
+          <div class="review-item"><span class="review-label">Relationship</span><span class="review-value" id="rev-emRelation">-</span></div>
+          <div class="review-item"><span class="review-label">Emergency Phone</span><span class="review-value" id="rev-emPhone">-</span></div>
+        </div>
+      </div>
+
+      <!-- Review Section 4 -->
+      <div class="review-section-box">
+        <div class="review-section-title"><i class="fa-solid fa-shield-halved"></i> 4. Identity &amp; Documents</div>
+        <div class="review-grid">
+          <div class="review-item"><span class="review-label">Profile Photo</span><span class="review-value" id="rev-photo" style="color: var(--success);"><i class="fa-solid fa-check"></i> Attached</span></div>
+          <div class="review-item"><span class="review-label">Govt ID Type &amp; No</span><span class="review-value" id="rev-govtId" style="font-family: 'JetBrains Mono', monospace;">-</span></div>
+          <div class="review-item"><span class="review-label">Govt ID Document</span><span class="review-value" id="rev-govtDoc" style="color: var(--success);"><i class="fa-solid fa-check"></i> Attached</span></div>
+          <div class="review-item"><span class="review-label">DL Number</span><span class="review-value" id="rev-dl" style="font-family: 'JetBrains Mono', monospace;">-</span></div>
+          <div class="review-item"><span class="review-label">DL Expiry</span><span class="review-value" id="rev-dlExpiry">-</span></div>
+          <div class="review-item"><span class="review-label">DL Document</span><span class="review-value" id="rev-dlDoc" style="color: var(--success);"><i class="fa-solid fa-check"></i> Attached</span></div>
+        </div>
+      </div>
+
+      <!-- Review Section 5 -->
+      <div class="review-section-box">
+        <div class="review-section-title"><i class="fa-solid fa-motorcycle"></i> 5. Vehicle Details</div>
+        <div class="review-grid">
+          <div class="review-item"><span class="review-label">Vehicle Type</span><span class="review-value" id="rev-vType">-</span></div>
+          <div class="review-item"><span class="review-label">Ownership</span><span class="review-value" id="rev-vOwner">-</span></div>
+          <div class="review-item"><span class="review-label">Model</span><span class="review-value" id="rev-vModel">-</span></div>
+          <div class="review-item"><span class="review-label">Plate Number</span><span class="review-value" id="rev-vPlate" style="font-family: 'JetBrains Mono', monospace;">-</span></div>
+          <div class="review-item"><span class="review-label">RC Document</span><span class="review-value" id="rev-rcDoc" style="color: var(--success);"><i class="fa-solid fa-check"></i> Attached</span></div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; margin-top: 24px;">
+        <button type="button" onclick="editForm()" class="btn btn-secondary" style="flex: 1;">
+          <i class="fa-solid fa-pen-to-square"></i>
+          <span>Edit Form</span>
+        </button>
+
+        <button type="button" onclick="confirmAndSubmit()" class="btn btn-primary" id="finalSubmitBtn" style="flex: 2; background: #059669;">
+          <i class="fa-solid fa-paper-plane"></i>
+          <span>Confirm &amp; Submit Registration</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- SUCCESS SCREEN (AFTER SUBMISSION) -->
+    <div class="form-card success-card" id="successCard" style="display: none;">
+      <div class="success-icon">
+        <i class="fa-solid fa-circle-check"></i>
+      </div>
+
+      <h2 style="font-size: 26px; font-weight: 900; margin-bottom: 6px;">Application Submitted Successfully!</h2>
+      <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px;">
+        Your DEVLY delivery partner registration has been recorded and submitted for document verification.
+      </p>
+
+      <!-- Prominent Team Contact Banner -->
+      <div class="contact-banner">
+        <div class="contact-banner-title">
+          <i class="fa-solid fa-headset"></i> Our Team Will Contact You Soon!
+        </div>
+        <div class="contact-banner-desc">
+          Our rider onboarding team will review your submitted credentials and contact you within <strong>24 to 48 hours</strong> via call or WhatsApp on your registered mobile number: <strong id="contactPhoneDisplay" style="color: var(--primary);"></strong>.
+        </div>
+      </div>
+
+      <!-- Application Reference Details Box -->
+      <div style="background: var(--bg); border: 2px solid var(--primary); border-radius: 16px; padding: 22px; text-align: left; margin-bottom: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+          <div>
+            <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Application Reference ID</div>
+            <div style="font-size: 22px; font-weight: 900; color: var(--primary); font-family: 'JetBrains Mono', monospace;" id="outRegId">DEVLY-REG-2026-9042</div>
+          </div>
+          <span style="font-size: 11.5px; font-weight: 800; padding: 4px 10px; border-radius: 8px; background: rgba(16, 185, 129, 0.15); color: var(--success);">
+            <i class="fa-solid fa-shield-check"></i> UNDER_VERIFICATION
+          </span>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); font-size: 13px;">
+          <div><span style="color: var(--text-muted);">Partner Name:</span> <strong id="outName">-</strong></div>
+          <div><span style="color: var(--text-muted);">Mobile:</span> <strong id="outMobile">-</strong></div>
+          <div><span style="color: var(--text-muted);">City &amp; State:</span> <strong id="outLocation">-</strong></div>
+          <div><span style="color: var(--text-muted);">Vehicle:</span> <strong id="outVehicle">-</strong></div>
+        </div>
+      </div>
+
+      <!-- Onboarding Steps Indicator -->
+      <div style="margin-bottom: 24px;">
+        <div style="font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 10px; text-align: left;">
+          Onboarding Process:
+        </div>
+        <div class="timeline-steps">
+          <div class="timeline-step active">
+            <div class="step-num"><i class="fa-solid fa-check"></i></div>
+            <div class="step-name">1. Form Received</div>
+          </div>
+          <div class="timeline-step active">
+            <div class="step-num">2</div>
+            <div class="step-name">2. Doc Verification</div>
+          </div>
+          <div class="timeline-step">
+            <div class="step-num">3</div>
+            <div class="step-name">3. Team Call / Briefing</div>
+          </div>
+          <div class="timeline-step">
+            <div class="step-num">4</div>
+            <div class="step-name">4. Kit &amp; Fleet Live</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <a href="index.html" class="btn btn-primary">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>Return to Landing Page</span>
+        </a>
+
+        <button onclick="resetAndNew()" class="btn" style="background: transparent; color: var(--text-muted); font-size: 13px; font-weight: 700;">
+          + Register Another Delivery Partner
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer style="border-top: 1px solid var(--border); padding: 24px 0; margin-top: auto; font-size: 12.5px; color: var(--text-muted); text-align: center;">
+    <div class="container">
+      <div>© 2026 DEVLY Delivery Network • All Rights Reserved.</div>
+    </div>
+  </footer>
+
+  <!-- ====================================================
+       JAVASCRIPT LOGIC
+       ==================================================== -->
+  <script>
+    const SEED_DATA = [
+      {
+        regId: "DEVLY-REG-2026-9021",
+        fullName: "Vikram Sharma",
+        mobileNumber: "9876543210",
+        email: "vikram.sharma@example.com",
+        dob: "1998-05-14",
+        gender: "Male",
+        languages: ["English", "Hindi", "Kannada"],
+        currentAddress: "#42, 2nd Floor, 5th Cross, Indiranagar",
+        city: "Bengaluru",
+        state: "Karnataka",
+        pinCode: "560038",
+        emergencyName: "Ramesh Sharma",
+        emergencyRelation: "Father",
+        emergencyPhone: "9845112233",
+        riderPhoto: "vikram_profile.jpg",
+        govtIdType: "Aadhaar Card",
+        govtIdNumber: "882190213412",
+        govtIdDoc: "aadhaar_vikram_card.pdf",
+        dlNumber: "KA0120220088191",
+        dlExpiry: "2035-08-20",
+        dlDoc: "dl_vikram_front_back.pdf",
+        vehicleType: "Motorcycle (Petrol 2W)",
+        vehicleOwnership: "Self Owned",
+        vehicleModel: "Hero Splendor Plus",
+        vehicleRegNumber: "KA01EK8821",
+        rcDoc: "rc_ka01ek8821.pdf",
+        submittedAt: "2026-09-02 10:15:30 IST",
+        status: "APPROVED"
+      },
+      {
+        regId: "DEVLY-REG-2026-9022",
+        fullName: "Rahul Kumar Yadav",
+        mobileNumber: "9812345678",
+        email: "rahul.yadav@example.com",
+        dob: "2000-11-22",
+        gender: "Male",
+        languages: ["English", "Hindi", "Telugu"],
+        currentAddress: "#12, 4th Block, Koramangala",
+        city: "Bengaluru",
+        state: "Karnataka",
+        pinCode: "560034",
+        emergencyName: "Sunita Yadav",
+        emergencyRelation: "Mother",
+        emergencyPhone: "9741223344",
+        riderPhoto: "rahul_profile.jpg",
+        govtIdType: "Aadhaar Card",
+        govtIdNumber: "492133109940",
+        govtIdDoc: "aadhaar_rahul.jpg",
+        dlNumber: "KA0320210049210",
+        dlExpiry: "2036-04-15",
+        dlDoc: "dl_rahul_scanned.pdf",
+        vehicleType: "Electric Vehicle (EV 2W)",
+        vehicleOwnership: "Self Owned",
+        vehicleModel: "Ather 450X Gen 3",
+        vehicleRegNumber: "KA03EV4410",
+        rcDoc: "rc_ka03ev4410.pdf",
+        submittedAt: "2026-09-03 14:22:15 IST",
+        status: "APPROVED"
+      },
+      {
+        regId: "DEVLY-REG-2026-9023",
+        fullName: "Deepak Choudhary",
+        mobileNumber: "9654321098",
+        email: "deepak.c@example.com",
+        dob: "1997-03-08",
+        gender: "Male",
+        languages: ["Hindi", "English"],
+        currentAddress: "Flat 204, Sector 62",
+        city: "Noida",
+        state: "Uttar Pradesh",
+        pinCode: "201301",
+        emergencyName: "Pooja Choudhary",
+        emergencyRelation: "Spouse",
+        emergencyPhone: "9811009988",
+        riderPhoto: "deepak_photo.png",
+        govtIdType: "PAN Card",
+        govtIdNumber: "ABCDE1234F",
+        govtIdDoc: "pan_deepak.pdf",
+        dlNumber: "DL0320210078192",
+        dlExpiry: "2034-09-10",
+        dlDoc: "dl_deepak_copy.pdf",
+        vehicleType: "Scooter (Gearless)",
+        vehicleOwnership: "Family / Friend Owned",
+        vehicleModel: "Honda Activa 6G",
+        vehicleRegNumber: "DL3SCD4481",
+        rcDoc: "rc_dl3scd4481.pdf",
+        submittedAt: "2026-09-04 11:05:40 IST",
+        status: "UNDER_REVIEW"
+      }
+    ];
+
+    function getRegistrations() {
+      const stored = localStorage.getItem("devly_master_rider_db");
+      if (stored) {
+        try {
+          return JSON.parse(stored);
+        } catch (e) {
+          console.error("Error reading stored registrations", e);
+        }
+      }
+      localStorage.setItem("devly_master_rider_db", JSON.stringify(SEED_DATA));
+      return SEED_DATA;
+    }
+
+    function saveRegistration(item) {
+      const list = getRegistrations();
+      list.unshift(item);
+      localStorage.setItem("devly_master_rider_db", JSON.stringify(list));
+    }
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      const cur = html.getAttribute("data-theme") || "light";
+      const nxt = cur === "light" ? "dark" : "light";
+      html.setAttribute("data-theme", nxt);
+      document.getElementById("themeToggleBtn").innerText = nxt === "light" ? "🌙" : "☀️";
+    }
+
+    // Language pills toggle behavior
+    document.querySelectorAll('.lang-pill').forEach(pill => {
+      pill.addEventListener('click', (e) => {
+        const checkbox = pill.querySelector('input[type="checkbox"]');
+        if (e.target !== checkbox) {
+          checkbox.checked = !checkbox.checked;
+        }
+        if (checkbox.checked) {
+          pill.classList.add('selected');
+        } else {
+          pill.classList.remove('selected');
+        }
+      });
+    });
+
+    function triggerUpload(id) {
+      document.getElementById(id).click();
+    }
+
+    function onFileUploaded(e, previewId) {
+      const prev = document.getElementById(previewId);
+      if (e.target.files && e.target.files[0]) {
+        prev.style.display = "inline-flex";
+        prev.querySelector("span").innerText = e.target.files[0].name + " (Attached)";
+      } else {
+        prev.style.display = "inline-flex";
+        prev.querySelector("span").innerText = "document_attached.pdf (Attached)";
+      }
+    }
+
+    function getSelectedLanguages() {
+      const checked = document.querySelectorAll('input[name="lang"]:checked');
+      return Array.from(checked).map(c => c.value);
+    }
+
+    // DUPLICATE CHECK FUNCTION
+    function checkDuplicateApplication(mobile, email, govtId, dlNumber, vehicleReg) {
+      const existing = getRegistrations();
+      const normMobile = mobile.replace(/\D/g, '');
+      const normEmail = email.toLowerCase().trim();
+      const normGovtId = govtId.replace(/\s+/g, '').toUpperCase();
+      const normDL = dlNumber.replace(/\s+/g, '').toUpperCase();
+      const normPlate = vehicleReg.replace(/\s+/g, '').toUpperCase();
+
+      for (let item of existing) {
+        const itemMobile = (item.mobileNumber || '').replace(/\D/g, '');
+        const itemEmail = (item.email || '').toLowerCase().trim();
+        const itemGovtId = (item.govtIdNumber || item.aadhaarNumber || '').replace(/\s+/g, '').toUpperCase();
+        const itemDL = (item.dlNumber || '').replace(/\s+/g, '').toUpperCase();
+        const itemPlate = (item.vehicleRegNumber || '').replace(/\s+/g, '').toUpperCase();
+
+        if (itemMobile === normMobile) {
+          return {
+            field: "Mobile Number",
+            value: mobile,
+            regId: item.regId,
+            name: item.fullName
+          };
+        }
+
+        if (normEmail && itemEmail === normEmail) {
+          return {
+            field: "Email Address",
+            value: email,
+            regId: item.regId,
+            name: item.fullName
+          };
+        }
+
+        if (normGovtId && normGovtId.length >= 6 && itemGovtId === normGovtId) {
+          return {
+            field: "Government ID",
+            value: govtId,
+            regId: item.regId,
+            name: item.fullName
+          };
+        }
+
+        if (normDL && normDL.length >= 6 && normDL !== "CYCLE-NA" && itemDL === normDL) {
+          return {
+            field: "Driving Licence",
+            value: dlNumber,
+            regId: item.regId,
+            name: item.fullName
+          };
+        }
+
+        if (normPlate && normPlate.length >= 5 && normPlate !== "CYCLE-NA" && itemPlate === normPlate) {
+          return {
+            field: "Vehicle Registration",
+            value: vehicleReg,
+            regId: item.regId,
+            name: item.fullName
+          };
+        }
+      }
+
+      return null;
+    }
+
+    function validateForm() {
+      let valid = true;
+      document.querySelectorAll(".form-input, .form-select, .form-textarea").forEach(el => el.classList.remove("error"));
+      document.querySelectorAll(".error-msg").forEach(el => el.classList.remove("visible"));
+      
+      const alertBox = document.getElementById("duplicateAlertBox");
+      alertBox.classList.remove("visible");
+
+      const name = document.getElementById("fullName").value.trim();
+      const mobile = document.getElementById("mobileNumber").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const dob = document.getElementById("dob").value;
+      const gender = document.getElementById("gender").value;
+      const langs = getSelectedLanguages();
+
+      const address = document.getElementById("currentAddress").value.trim();
+      const city = document.getElementById("city").value.trim();
+      const state = document.getElementById("state").value.trim();
+      const pinCode = document.getElementById("pinCode").value.trim();
+
+      const emName = document.getElementById("emergencyName").value.trim();
+      const emRelation = document.getElementById("emergencyRelation").value;
+      const emPhone = document.getElementById("emergencyPhone").value.trim();
+
+      const govtIdNumber = document.getElementById("govtIdNumber").value.trim();
+      const dlNumber = document.getElementById("dlNumber").value.trim();
+      const dlExpiry = document.getElementById("dlExpiry").value;
+
+      const vehicleModel = document.getElementById("vehicleModel").value.trim();
+      const vehicleReg = document.getElementById("vehicleRegNumber").value.trim();
+
+      if (name.length < 3) {
+        document.getElementById("fullName").classList.add("error");
+        document.getElementById("err-fullName").classList.add("visible");
+        valid = false;
+      }
+
+      if (!/^[6-9]\d{9}$/.test(mobile)) {
+        document.getElementById("mobileNumber").classList.add("error");
+        document.getElementById("err-mobileNumber").classList.add("visible");
+        valid = false;
+      }
+
+      if (!/^\S+@\S+\.\S+$/.test(email)) {
+        document.getElementById("email").classList.add("error");
+        document.getElementById("err-email").classList.add("visible");
+        valid = false;
+      }
+
+      if (!dob) {
+        document.getElementById("dob").classList.add("error");
+        document.getElementById("err-dob").classList.add("visible");
+        valid = false;
+      }
+
+      if (!gender) {
+        document.getElementById("gender").classList.add("error");
+        document.getElementById("err-gender").classList.add("visible");
+        valid = false;
+      }
+
+      if (langs.length === 0) {
+        document.getElementById("err-languages").classList.add("visible");
+        valid = false;
+      }
+
+      if (address.length < 5) {
+        document.getElementById("currentAddress").classList.add("error");
+        document.getElementById("err-currentAddress").classList.add("visible");
+        valid = false;
+      }
+
+      if (city.length < 2) {
+        document.getElementById("city").classList.add("error");
+        document.getElementById("err-city").classList.add("visible");
+        valid = false;
+      }
+
+      if (state.length < 2) {
+        document.getElementById("state").classList.add("error");
+        document.getElementById("err-state").classList.add("visible");
+        valid = false;
+      }
+
+      if (!/^\d{6}$/.test(pinCode)) {
+        document.getElementById("pinCode").classList.add("error");
+        document.getElementById("err-pinCode").classList.add("visible");
+        valid = false;
+      }
+
+      if (emName.length < 3) {
+        document.getElementById("emergencyName").classList.add("error");
+        document.getElementById("err-emergencyName").classList.add("visible");
+        valid = false;
+      }
+
+      if (!emRelation) {
+        document.getElementById("emergencyRelation").classList.add("error");
+        document.getElementById("err-emergencyRelation").classList.add("visible");
+        valid = false;
+      }
+
+      if (!/^[6-9]\d{9}$/.test(emPhone)) {
+        document.getElementById("emergencyPhone").classList.add("error");
+        document.getElementById("err-emergencyPhone").classList.add("visible");
+        valid = false;
+      }
+
+      if (govtIdNumber.length < 4) {
+        document.getElementById("govtIdNumber").classList.add("error");
+        document.getElementById("err-govtIdNumber").classList.add("visible");
+        valid = false;
+      }
+
+      if (dlNumber.length < 4) {
+        document.getElementById("dlNumber").classList.add("error");
+        document.getElementById("err-dlNumber").classList.add("visible");
+        valid = false;
+      }
+
+      if (!dlExpiry) {
+        document.getElementById("dlExpiry").classList.add("error");
+        document.getElementById("err-dlExpiry").classList.add("visible");
+        valid = false;
+      }
+
+      if (vehicleModel.length < 2) {
+        document.getElementById("vehicleModel").classList.add("error");
+        document.getElementById("err-vehicleModel").classList.add("visible");
+        valid = false;
+      }
+
+      if (vehicleReg.length < 3) {
+        document.getElementById("vehicleRegNumber").classList.add("error");
+        document.getElementById("err-vehicleRegNumber").classList.add("visible");
+        valid = false;
+      }
+
+      if (!valid) return false;
+
+      // Duplicate Check
+      const dup = checkDuplicateApplication(mobile, email, govtIdNumber, dlNumber, vehicleReg);
+      if (dup) {
+        const msg = `An active rider application already exists with this ${dup.field} (${dup.value}). Application ID: ${dup.regId} (${dup.name}). Duplicate submissions are not allowed.`;
+        document.getElementById("duplicateAlertMsg").innerText = msg;
+        alertBox.classList.add("visible");
+        alertBox.scrollIntoView({ behavior: "smooth", block: "center" });
+        return false;
+      }
+
+      return true;
+    }
+
+    let pendingData = null;
+
+    function handleFormReview(e) {
+      e.preventDefault();
+      if (!validateForm()) {
+        const firstErr = document.querySelector(".error-msg.visible");
+        if (firstErr) {
+          firstErr.parentElement.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+        return;
+      }
+
+      const photoFile = document.getElementById("riderPhoto").files[0];
+      const govtDocFile = document.getElementById("govtIdDoc").files[0];
+      const dlFile = document.getElementById("dlDoc").files[0];
+      const rcFile = document.getElementById("rcDoc").files[0];
+
+      pendingData = {
+        fullName: document.getElementById("fullName").value.trim(),
+        mobileNumber: document.getElementById("mobileNumber").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        dob: document.getElementById("dob").value,
+        gender: document.getElementById("gender").value,
+        languages: getSelectedLanguages(),
+        
+        currentAddress: document.getElementById("currentAddress").value.trim(),
+        city: document.getElementById("city").value.trim(),
+        state: document.getElementById("state").value.trim(),
+        pinCode: document.getElementById("pinCode").value.trim(),
+        
+        emergencyName: document.getElementById("emergencyName").value.trim(),
+        emergencyRelation: document.getElementById("emergencyRelation").value,
+        emergencyPhone: document.getElementById("emergencyPhone").value.trim(),
+        
+        riderPhoto: photoFile ? photoFile.name : "rider_profile_photo.jpg",
+        
+        govtIdType: document.getElementById("govtIdType").value,
+        govtIdNumber: document.getElementById("govtIdNumber").value.trim().toUpperCase(),
+        govtIdDoc: govtDocFile ? govtDocFile.name : "government_id_document.pdf",
+        
+        dlNumber: document.getElementById("dlNumber").value.trim().toUpperCase(),
+        dlExpiry: document.getElementById("dlExpiry").value,
+        dlDoc: dlFile ? dlFile.name : "driving_licence_copy.pdf",
+        
+        vehicleType: document.getElementById("vehicleType").value,
+        vehicleOwnership: document.getElementById("vehicleOwnership").value,
+        vehicleModel: document.getElementById("vehicleModel").value.trim(),
+        vehicleRegNumber: document.getElementById("vehicleRegNumber").value.trim().toUpperCase(),
+        rcDoc: rcFile ? rcFile.name : "vehicle_rc_document.pdf"
+      };
+
+      // Populate Review Screen
+      document.getElementById("rev-name").innerText = pendingData.fullName;
+      document.getElementById("rev-mobile").innerText = pendingData.mobileNumber;
+      document.getElementById("rev-email").innerText = pendingData.email;
+      document.getElementById("rev-dob").innerText = pendingData.dob;
+      document.getElementById("rev-gender").innerText = pendingData.gender;
+      document.getElementById("rev-languages").innerText = pendingData.languages.join(", ");
+
+      document.getElementById("rev-address").innerText = pendingData.currentAddress;
+      document.getElementById("rev-city").innerText = pendingData.city;
+      document.getElementById("rev-state").innerText = pendingData.state;
+      document.getElementById("rev-pincode").innerText = pendingData.pinCode;
+
+      document.getElementById("rev-emName").innerText = pendingData.emergencyName;
+      document.getElementById("rev-emRelation").innerText = pendingData.emergencyRelation;
+      document.getElementById("rev-emPhone").innerText = pendingData.emergencyPhone;
+
+      document.getElementById("rev-govtId").innerText = `${pendingData.govtIdType}: ${pendingData.govtIdNumber}`;
+      document.getElementById("rev-dl").innerText = pendingData.dlNumber;
+      document.getElementById("rev-dlExpiry").innerText = pendingData.dlExpiry;
+
+      document.getElementById("rev-vType").innerText = pendingData.vehicleType;
+      document.getElementById("rev-vOwner").innerText = pendingData.vehicleOwnership;
+      document.getElementById("rev-vModel").innerText = pendingData.vehicleModel;
+      document.getElementById("rev-vPlate").innerText = pendingData.vehicleRegNumber;
+
+      document.getElementById("registrationCard").style.display = "none";
+      document.getElementById("reviewCard").style.display = "block";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function editForm() {
+      document.getElementById("reviewCard").style.display = "none";
+      document.getElementById("registrationCard").style.display = "block";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    let isSubmitting = false;
+
+    function confirmAndSubmit() {
+      if (isSubmitting || !pendingData) return;
+
+      // Final Duplicate Safety Verification
+      const dup = checkDuplicateApplication(
+        pendingData.mobileNumber,
+        pendingData.email,
+        pendingData.govtIdNumber,
+        pendingData.dlNumber,
+        pendingData.vehicleRegNumber
+      );
+
+      if (dup) {
+        alert(`Duplicate submission blocked! An application already exists with ${dup.field}: ${dup.value} (Ref: ${dup.regId}).`);
+        editForm();
+        return;
+      }
+
+      isSubmitting = true;
+      const btn = document.getElementById("finalSubmitBtn");
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Submitting Application...`;
+
+      const randomSeq = Math.floor(1000 + Math.random() * 9000);
+      const regId = `DEVLY-REG-2026-${randomSeq}`;
+
+      const fullRecord = {
+        regId: regId,
+        fullName: pendingData.fullName,
+        mobileNumber: pendingData.mobileNumber,
+        email: pendingData.email,
+        dob: pendingData.dob,
+        gender: pendingData.gender,
+        languages: pendingData.languages,
+        
+        currentAddress: pendingData.currentAddress,
+        city: pendingData.city,
+        state: pendingData.state,
+        pinCode: pendingData.pinCode,
+        
+        emergencyName: pendingData.emergencyName,
+        emergencyRelation: pendingData.emergencyRelation,
+        emergencyPhone: pendingData.emergencyPhone,
+        
+        riderPhoto: pendingData.riderPhoto,
+        
+        govtIdType: pendingData.govtIdType,
+        govtIdNumber: pendingData.govtIdNumber,
+        govtIdDoc: pendingData.govtIdDoc,
+        
+        dlNumber: pendingData.dlNumber,
+        dlExpiry: pendingData.dlExpiry,
+        dlDoc: pendingData.dlDoc,
+        
+        vehicleType: pendingData.vehicleType,
+        vehicleOwnership: pendingData.vehicleOwnership,
+        vehicleModel: pendingData.vehicleModel,
+        vehicleRegNumber: pendingData.vehicleRegNumber,
+        rcDoc: pendingData.rcDoc,
+        
+        submittedAt: new Date().toISOString().replace('T', ' ').substring(0, 19) + ' IST',
+        status: "UNDER_VERIFICATION"
+      };
+
+      saveRegistration(fullRecord);
+
+      setTimeout(() => {
+        document.getElementById("reviewCard").style.display = "none";
+        document.getElementById("outRegId").innerText = regId;
+        document.getElementById("outName").innerText = fullRecord.fullName;
+        document.getElementById("outMobile").innerText = fullRecord.mobileNumber;
+        document.getElementById("contactPhoneDisplay").innerText = fullRecord.mobileNumber;
+        document.getElementById("outLocation").innerText = `${fullRecord.city}, ${fullRecord.state} (${fullRecord.pinCode})`;
+        document.getElementById("outVehicle").innerText = `${fullRecord.vehicleModel} (${fullRecord.vehicleRegNumber})`;
+
+        document.getElementById("successCard").style.display = "block";
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        isSubmitting = false;
+      }, 700);
+    }
+
+    function resetAndNew() {
+      document.getElementById("riderRegistrationForm").reset();
+      document.getElementById("preview-riderPhoto").style.display = "none";
+      document.getElementById("preview-govtIdDoc").style.display = "none";
+      document.getElementById("preview-dlDoc").style.display = "none";
+      document.getElementById("preview-rcDoc").style.display = "none";
+      document.getElementById("duplicateAlertBox").classList.remove("visible");
+      
+      document.querySelectorAll('.lang-pill').forEach(pill => {
+        const cb = pill.querySelector('input');
+        if (cb.value === "English" || cb.value === "Hindi") {
+          cb.checked = true;
+          pill.classList.add('selected');
+        } else {
+          cb.checked = false;
+          pill.classList.remove('selected');
+        }
+      });
+
+      document.getElementById("successCard").style.display = "none";
+      document.getElementById("registrationCard").style.display = "block";
+      
+      const btn = document.getElementById("finalSubmitBtn");
+      btn.disabled = false;
+      btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Confirm &amp; Submit Registration`;
+      
+      pendingData = null;
+      isSubmitting = false;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      getRegistrations();
+    });
+  </script>
+</body>
+</html>
+
+

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="devly-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF6B00"/>
+      <stop offset="100%" stop-color="#E65100"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="128" fill="url(#devly-grad)"/>
+  <path d="M140 320 A 45 45 0 1 0 230 320 A 45 45 0 1 0 140 320 Z" fill="none" stroke="#FFFFFF" stroke-width="26"/>
+  <path d="M282 320 A 45 45 0 1 0 372 320 A 45 45 0 1 0 282 320 Z" fill="none" stroke="#FFFFFF" stroke-width="26"/>
+  <path d="M185 320 L 256 195 L 327 320 L 256 320 Z" fill="none" stroke="#FFFFFF" stroke-width="24" stroke-linejoin="round"/>
+  <path d="M256 195 L 290 145 L 340 145" fill="none" stroke="#FFFFFF" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="215" cy="155" r="22" fill="#111827"/>
+  <path d="M200 155 L 256 195" stroke="#FFFFFF" stroke-width="20" stroke-linecap="round"/>
+</svg>
