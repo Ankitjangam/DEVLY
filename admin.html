@@ -488,13 +488,13 @@
 
       const filtered = records.filter(r => {
         return !q || 
-          r.fullName?.toLowerCase().includes(q) ||
-          r.mobileNumber?.includes(q) ||
-          r.email?.toLowerCase().includes(q) ||
-          r.regId?.toLowerCase().includes(q) ||
-          r.city?.toLowerCase().includes(q) ||
-          r.vehicleRegNumber?.toLowerCase().includes(q) ||
-          r.dlNumber?.toLowerCase().includes(q);
+          String(r.fullName || '').toLowerCase().includes(q) ||
+          String(r.mobileNumber || '').includes(q) ||
+          String(r.email || '').toLowerCase().includes(q) ||
+          String(r.regId || '').toLowerCase().includes(q) ||
+          String(r.city || '').toLowerCase().includes(q) ||
+          String(r.vehicleRegNumber || '').toLowerCase().includes(q) ||
+          String(r.dlNumber || '').toLowerCase().includes(q);
       });
 
       const tbody = document.getElementById("tableBody");
