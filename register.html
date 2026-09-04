@@ -1112,17 +1112,24 @@
           url += '.json';
         }
 
-        const res = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(item)
-        });
+        const isGoogleScript = url.includes('script.google.com');
 
-        if (res.ok) {
-          console.log('✅ Realtime Cloud Sync Successful:', item.regId);
+        const fetchOptions = {
+          method: 'POST',
+          body: JSON.stringify(item)
+        };
+
+        if (isGoogleScript) {
+          fetchOptions.mode = 'no-cors';
+          fetchOptions.headers = { 'Content-Type': 'text/plain;charset=utf-8' };
+        } else {
+          fetchOptions.headers = { 'Content-Type': 'application/json' };
         }
+
+        await fetch(url, fetchOptions);
+        console.log('✅ Realtime Cloud Sync Dispatched:', item.regId);
       } catch (err) {
-        console.warn('Cloud sync offline/cached:', err);
+        console.warn('Cloud sync offline/cached locally:', err);
       }
     }
 
