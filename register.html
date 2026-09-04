@@ -1141,21 +1141,6 @@
       document.getElementById("themeToggleBtn").innerText = nxt === "light" ? "🌙" : "☀️";
     }
 
-    // Language pills toggle behavior
-    document.querySelectorAll('.lang-pill').forEach(pill => {
-      pill.addEventListener('click', (e) => {
-        const checkbox = pill.querySelector('input[type="checkbox"]');
-        if (e.target !== checkbox) {
-          checkbox.checked = !checkbox.checked;
-        }
-        if (checkbox.checked) {
-          pill.classList.add('selected');
-        } else {
-          pill.classList.remove('selected');
-        }
-      });
-    });
-
     function triggerUpload(id) {
       document.getElementById(id).click();
     }
@@ -1171,9 +1156,41 @@
       }
     }
 
+    // Language pills toggle behavior (native change event listener)
+    function initLanguagePills() {
+      document.querySelectorAll('.lang-pill input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+          const pill = checkbox.closest('.lang-pill');
+          if (pill) {
+            if (checkbox.checked) {
+              pill.classList.add('selected');
+            } else {
+              pill.classList.remove('selected');
+            }
+          }
+          const err = document.getElementById("err-languages");
+          if (err) {
+            err.classList.remove("visible");
+          }
+        });
+      });
+    }
+
     function getSelectedLanguages() {
       const checked = document.querySelectorAll('input[name="lang"]:checked');
-      return Array.from(checked).map(c => c.value);
+      const list = Array.from(checked).map(c => c.value);
+      if (list.length > 0) return list;
+      
+      // Auto-fallback default if none is selected
+      const defaultLangs = ["Hindi", "English"];
+      document.querySelectorAll('.lang-pill input[type="checkbox"]').forEach(cb => {
+        if (defaultLangs.includes(cb.value)) {
+          cb.checked = true;
+          const pill = cb.closest('.lang-pill');
+          if (pill) pill.classList.add('selected');
+        }
+      });
+      return defaultLangs;
     }
 
     // DUPLICATE CHECK FUNCTION
@@ -1599,6 +1616,7 @@
 
     document.addEventListener("DOMContentLoaded", () => {
       getRegistrations();
+      initLanguagePills();
     });
   </script>
 </body>
